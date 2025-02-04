@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 type ActivityStatus = "pending" | "concluded";
 
-interface Activity {
+export interface Activity {
   id: string;
   name: string;
   status?: ActivityStatus;
@@ -13,6 +13,7 @@ interface Activity {
 interface ActivitiesContextProps {
   activities: Activity[];
   addActivity: (name: string) => void;
+  removeActivity: (id: string) => void;
   updateActivity: (id: string, data: Partial<Activity>) => void;
   setActivities: React.Dispatch<React.SetStateAction<Activity[]>>;
 }
@@ -53,8 +54,16 @@ export function ActivitiesProvider({ children }: { children: React.ReactNode }) 
     });
   };
 
+  const removeActivity = (id: string) => {
+    setActivities((prev) => {
+      const updatedActivities = prev.filter((act) => act.id === id);
+      localStorage.setItem("activities", JSON.stringify(updatedActivities));
+      return updatedActivities;
+    });
+  };
+
   return (
-    <ActivitiesContext.Provider value={{ activities, addActivity, updateActivity, setActivities }}>
+    <ActivitiesContext.Provider value={{ activities, addActivity, updateActivity, setActivities, removeActivity }}>
       {children}
     </ActivitiesContext.Provider>
   );

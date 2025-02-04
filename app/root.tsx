@@ -10,8 +10,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import { AppShell, ColorSchemeScript, MantineProvider, mantineHtmlProps, NavLink as MantineNavLink, Space, Burger, Group, Stack } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { AppShell, ColorSchemeScript, MantineProvider, mantineHtmlProps, NavLink as MantineNavLink, Burger, Group, Stack, em, Center, Loader, Avatar, Text, Kbd } from '@mantine/core';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 
 import type { Route } from "./+types/root";
 import { ActivitiesProvider } from '~/contexts/ActivitiesContex';
@@ -48,15 +48,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function HydrateFallback() {
-  return <div>Carregando...</div>;
+  return (
+    <Center style={{ minHeight: '100dvh' }}>
+      <Loader size="xl" type="dots" />
+    </Center>
+  );
 }
 
 export default function App() {
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
   const [opened, { toggle }] = useDisclosure();
 
   return (
     <ActivitiesProvider>
       <AppShell
+        header={{ height: 30, collapsed: !isMobile }}
         navbar={{ width: 300, breakpoint: 'sm',  collapsed: { mobile: !opened }, }}
         padding="md"
       >
@@ -73,24 +79,27 @@ export default function App() {
         </AppShell.Header>
         <AppShell.Navbar p="md">
           <Stack>
-            <div>Logo</div>
+            <Group>
+              <Avatar src="https://i.pravatar.cc/300" radius="xl"/>
+              <Text>Nome Aleatório</Text>
+            </Group>
             <MantineNavLink
               href="/"
-              label="Página inicial"
+              label="Focar"
               onClick={toggle}
               renderRoot={(props) => (
                 <NavLink to="/" {...props} />
               )}
             />
             <MantineNavLink
-              label="Adicionar atividade"
+              label="Organizar"
               onClick={toggle}
               renderRoot={(props) => (
                 <NavLink to="/add" {...props} />
               )}
             />
             <MantineNavLink
-              label="Histórico de atividades"
+              label="Histórico"
               onClick={toggle}
               renderRoot={(props) => (
                 <NavLink to="/history" {...props} />

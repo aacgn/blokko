@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { TextInput, Button, Card, Group, Stack, Container, Title } from "@mantine/core";
+import { TextInput, Card, Group, Stack, Container, Title, Badge, ActionIcon } from "@mantine/core";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
-import { SortableItem } from "~/components/SortableItem";
-
 import type { DragEndEvent } from "@dnd-kit/core";
+import { SortableItem } from "~/components/SortableItem";
 import { useActivities } from "~/contexts/ActivitiesContex";
+import type { Activity } from "~/contexts/ActivitiesContex";
 
 export default function AddActivitiesPage() {
-  const { activities, addActivity, setActivities } = useActivities();
+  const { activities, addActivity, removeActivity, setActivities } = useActivities();
   const [newActivity, setNewActivity] = useState<string>("");
 
   const pendingActivities = activities.filter(
@@ -26,24 +26,36 @@ export default function AddActivitiesPage() {
     }
   };
 
+  const handleAddActivity = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && newActivity.trim()) {
+      addActivity(newActivity);
+      setNewActivity("");
+    }
+  };
+
   return (
     <Container size="sm" py="xl">
       <Group align="flex-end" mb="lg">
         <TextInput
-          placeholder="Digite uma atividade"
+          placeholder="Digite uma atividade e pressione Enter"
           value={newActivity}
           onChange={(event) => setNewActivity(event.currentTarget.value)}
+          onKeyDown={handleAddActivity}
           style={{ flex: 1 }}
         />
-        <Button onClick={() => { if (newActivity.trim()) addActivity(newActivity); setNewActivity(""); }}>Adicionar</Button>
       </Group>
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={pendingActivities.map(a => a.id)} strategy={verticalListSortingStrategy}>
           <Stack>
-            {pendingActivities.map((activity) => (
+            {pendingActivities.map((activity: Activity) => (
               <SortableItem key={activity.id} id={activity.id}>
                 <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <Title order={4}>{activity.name}</Title>
+                  <Group align="center">
+                    <Title order={4}>{activity.name}</Title>
+                  </Group>
+                  <Group mt="sm">
+                    <Badge color="yellow">Teste</Badge>
+                  </Group>
                 </Card>
               </SortableItem>
             ))}

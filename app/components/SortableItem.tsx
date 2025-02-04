@@ -10,7 +10,6 @@ export function SortableItem({ id, children }: SortableItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
-    touchAction: "none",
     transform: CSS.Transform.toString(transform),
     transition,
   };
