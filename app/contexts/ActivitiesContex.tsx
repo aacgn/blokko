@@ -2,9 +2,11 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 type ActivityStatus = "pending" | "concluded";
 
-export interface Activity {
+interface Activity {
   id: string;
   name: string;
+  description?: string;
+  tags?: string[];
   status?: ActivityStatus;
   proof?: File;
   statusDate?: Date;
@@ -12,7 +14,7 @@ export interface Activity {
 
 interface ActivitiesContextProps {
   activities: Activity[];
-  addActivity: (name: string) => void;
+  addActivity: (activity: Omit<Activity, "id" | "status">) => void;
   removeActivity: (id: string) => void;
   updateActivity: (id: string, data: Partial<Activity>) => void;
   setActivities: React.Dispatch<React.SetStateAction<Activity[]>>;
@@ -38,20 +40,12 @@ export function ActivitiesProvider({ children }: { children: React.ReactNode }) 
     localStorage.setItem("activities", JSON.stringify(activities));
   }, [activities]);
 
-  const addActivity = (name: string) => {
-    setActivities((prev) => {
-      const newActivities = [...prev, { id: crypto.randomUUID(), name, status: "pending" as ActivityStatus }];
-      localStorage.setItem("activities", JSON.stringify(newActivities));
-      return newActivities;
-    });
+  function addActivity(activity: Omit<Activity, "id" | "status">) {
+    setActivities(prev => [...prev, { id: crypto.randomUUID(), status: "pending", ...activity }]);
   };
-
+  
   const updateActivity = (id: string, data: Partial<Activity>) => {
-    setActivities((prev) => {
-      const updatedActivities = prev.map((act) => (act.id === id ? { ...act, ...data } : act));
-      localStorage.setItem("activities", JSON.stringify(updatedActivities));
-      return updatedActivities;
-    });
+    setActivities((prev) => prev.map((act) => (act.id === id ? { ...act, ...data } : act)));
   };
 
   const removeActivity = (id: string) => {

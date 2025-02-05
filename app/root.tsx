@@ -85,17 +85,10 @@ export default function App() {
             </Group>
             <MantineNavLink
               href="/"
-              label="Focar"
-              onClick={toggle}
-              renderRoot={(props) => (
-                <NavLink to="/" {...props} />
-              )}
-            />
-            <MantineNavLink
               label="Organizar"
               onClick={toggle}
               renderRoot={(props) => (
-                <NavLink to="/add" {...props} />
+                <NavLink to="/" {...props} />
               )}
             />
             <MantineNavLink
